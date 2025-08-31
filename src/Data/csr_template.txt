@@ -1,0 +1,33 @@
+oid_section = OIDs
+
+[OIDs]
+certificateTemplateName = 1.3.6.1.4.1.311.20.2
+
+[req]
+default_bits = 2048
+req_extensions = v3_req
+prompt = no
+default_md = sha 256
+req_extensions = req_ext
+distinguished_name = dn
+
+[dn]
+C=REPLACE_WITH_COUNTRY_NAME
+OU=REPLACE_WITH_ORGANIZATION_UNIT_NAME
+O=REPLACE_WITH_ORGANIZATION_NAME
+CN=REPLACE_WITH_COMMON_NAME
+
+[v3_req]
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment
+
+[req_ext]
+certificateTemplateName = ASN1:PRINTABLESTRING:REPLACE_WITH_ASN_TEMPLATE
+subjectAltName = dirName:alt_names
+
+[alt_names]
+SN=REPLACE_WITH_SERIAL_NUMBER
+UID=REPLACE_WITH_ORGANIZATION_IDENTIFIER
+title=REPLACE_WITH_INVOICE_TYPE
+registeredAddress=REPLACE_WITH_LOCATION_ADDRESS
+businessCategory=REPLACE_WITH_BUSINESS_CATEGORY
