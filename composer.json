@@ -1,0 +1,44 @@
+{
+    "name": "zid/zatca",
+    "description": "ZATCA E-Invoicing integration tools",
+    "keywords": [
+        "zid",
+        "zatca"
+    ],
+    "homepage": "https://github.com/zidsa/zatca-php-package",
+    "license": "The Unlicense",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Islam Abdelfattah",
+            "email": "i.mohammed@zid.sa",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "ext-openssl": "*",
+        "guzzlehttp/guzzle": "^7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zid\\Zatca\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Zid\\Zatca\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
