@@ -14,7 +14,7 @@ class CertificateSigningRequestBuilder
     private string $organizationName = '';
     private string $organizationalUnitName = '';
     private string $address = '';
-    private int $invoiceType = 1100;
+    private string $invoiceType = '1100';
     private string $businessCategory = '';
     private ?\OpenSSLAsymmetricKey $privateKey = null;
     private ?\OpenSSLCertificateSigningRequest $csr = null;
@@ -30,9 +30,9 @@ class CertificateSigningRequestBuilder
         return $this;
     }
 
-    public function setSerialNumber(string $serialNumber): self
+    public function setSerialNumber(string $solutionProvider, $solutionName, string $serialNumber): self
     {
-        $this->serialNumber = $serialNumber;
+        $this->serialNumber = "1-{$solutionProvider}|2-{$solutionName}|3-{$serialNumber}";
         return $this;
     }
 
@@ -66,7 +66,7 @@ class CertificateSigningRequestBuilder
         return $this;
     }
 
-    public function setInvoiceType(int $invoiceType): self
+    public function setInvoiceType(string $invoiceType): self
     {
         $this->invoiceType = $invoiceType;
         return $this;
@@ -119,7 +119,7 @@ class CertificateSigningRequestBuilder
             'REPLACE_WITH_ASN_TEMPLATE' => $this->getAsnTemplate(),
             'REPLACE_WITH_SERIAL_NUMBER' => $this->serialNumber,
             'REPLACE_WITH_ORGANIZATION_IDENTIFIER' => $this->organizationIdentifier,
-            'REPLACE_WITH_INVOICE_TYPE' => (string) $this->invoiceType,
+            'REPLACE_WITH_INVOICE_TYPE' => $this->invoiceType,
             'REPLACE_WITH_LOCATION_ADDRESS' => $this->address,
             'REPLACE_WITH_BUSINESS_CATEGORY' => $this->businessCategory,
         ];
@@ -145,7 +145,7 @@ class CertificateSigningRequestBuilder
     /**
      * @throws CsrGenerationException
      */
-    public function generate(): void
+    public function generate(): self
     {
         $distinguishedNames = [
             "commonName" => $this->commonName,
@@ -165,6 +165,8 @@ class CertificateSigningRequestBuilder
         if ($this->csr === false) {
             throw new CsrGenerationException('CSR generation failed: ' . openssl_error_string());
         }
+
+        return $this;
     }
 
     public function getCsr(): string
