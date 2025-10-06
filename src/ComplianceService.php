@@ -50,8 +50,8 @@ class ComplianceService
             ),
             reportingStatus: $result['reportingStatus'],
             clearanceStatus: $result['clearanceStatus'],
-            qrSellertStatus: $result['qrSellertStatus'],
-            qrBuyertStatus: $result['qrBuyertStatus'],
+            qrSellerStatus: $result['qrSellertStatus'],
+            qrBuyerStatus: $result['qrBuyertStatus'],
         );
     }
 }

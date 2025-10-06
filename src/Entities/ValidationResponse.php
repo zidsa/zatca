@@ -8,8 +8,8 @@ class ValidationResponse
         public ValidationResults $validationResults,
         public ?string $reportingStatus,
         public ?string $clearanceStatus,
-        public ?string $qrSellertStatus,
-        public ?string $qrBuyertStatus,
+        public ?string $qrSellerStatus,
+        public ?string $qrBuyerStatus,
     ) {
     }
 }
