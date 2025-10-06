@@ -47,7 +47,20 @@ class ZatcaClient implements ZatcaClientInterface
             'json' => $payload,
         ];
 
-        $response = $this->httpClient->request($method, $endpoint, $options);
+        try {
+            $response = $this->httpClient->request($method, $endpoint, $options);
+        } catch (\GuzzleHttp\Exception\ClientException $exception) {
+            try {
+                $message = implode(
+                    ', ',
+                    (json_decode($exception->getResponse()->getBody()->getContents())->errors)
+                );
+            } catch (\Exception $e) {
+                $message = $exception->getMessage();
+            }
+            throw new ZatcaApiException($message, $exception->getCode(), $exception);
+        }
+
         $statusCode = $response->getStatusCode();
 
         if (!in_array($statusCode, self::SUCCESS_STATUS_CODES, true)) {
