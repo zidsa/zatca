@@ -53,14 +53,25 @@ class ZatcaClient implements ZatcaClientInterface
         try {
             $response = $this->httpClient->request($method, $endpoint, $options);
         } catch (\GuzzleHttp\Exception\ClientException $exception) {
+            $message = $exception->getMessage();
             try {
-                $message = implode(
-                    ', ',
-                    (json_decode($exception->getResponse()->getBody()->getContents())->errors)
-                );
+                $jsonResponse = json_decode($exception->getResponse()->getBody()->getContents());
+                if ($jsonResponse->errors ?? false) {
+                    $message = implode(
+                        ', ',
+                        $jsonResponse->errors
+                    );
+                } elseif ($jsonResponse->validationResults ?? false) {
+                    $errorMessages = array_map(fn($m) => "$m->code ($m->category): $m->message", $jsonResponse->validationResults->errorMessages);
+                    $message = implode(
+                        ', ',
+                        $errorMessages
+                    );
+                }
             } catch (\Exception $e) {
-                $message = $exception->getMessage();
+                //
             }
+
             throw new ZatcaApiException($message, $exception->getCode(), $exception);
         }
 

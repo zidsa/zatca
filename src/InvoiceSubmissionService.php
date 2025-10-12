@@ -6,10 +6,17 @@ use Zid\Zatca\API\ZatcaClient;
 use Zid\Zatca\Entities\CSID;
 use Zid\Zatca\Entities\SubmissionResponse;
 use Zid\Zatca\Entities\ValidationResults;
+use Zid\Zatca\Enums\ZatcaEnvironment;
+use Zid\Zatca\Exceptions\ZatcaApiException;
 
 class InvoiceSubmissionService
 {
-    public function __construct(private ZatcaClient $zatcaClient) {
+    private ZatcaClient $zatcaClient;
+
+    public function __construct(
+        ZatcaEnvironment $environment = ZatcaEnvironment::SANDBOX,
+    ) {
+        $this->zatcaClient = new ZatcaClient($environment);
     }
 
     public function submit(
@@ -21,13 +28,26 @@ class InvoiceSubmissionService
     ): SubmissionResponse
     {
         $api = $isSimplified ? $this->zatcaClient->reportingApi() : $this->zatcaClient->clearanceApi();
-        $response = $api->single(
-            binarySecurityToken: $csid->certificate,
-            secret: $csid->secret,
-            invoiceHash: $invoiceHash,
-            uuid: $invoiceUuid,
-            invoiceXml: $invoiceXml,
-        );
+        try {
+            $response = $api->single(
+                binarySecurityToken: $csid->certificate,
+                secret: $csid->secret,
+                invoiceHash: $invoiceHash,
+                uuid: $invoiceUuid,
+                invoiceXml: $invoiceXml,
+            );
+        } catch (ZatcaApiException $e) {
+            $previousException = $e->getPrevious();
+            if (!$previousException instanceof \GuzzleHttp\Exception\ClientException) {
+                throw $e;
+            }
+            $responseBody = $previousException->getResponse()->getBody();
+            $responseBody->rewind();
+            $response = json_decode($responseBody->getContents(), true);
+            if (!isset($response['validationResults'])) {
+                throw $e;
+            }
+        }
 
         $submissionStatus = $isSimplified ? $response['reportingStatus'] : $response['clearanceStatus'];
         $isSubmitted = $submissionStatus === ($isSimplified ? 'REPORTED' : 'CLEARED');;
