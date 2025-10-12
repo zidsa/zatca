@@ -29,6 +29,8 @@ class InvoiceSubmissionService
             invoiceXml: $invoiceXml,
         );
 
+        $submissionStatus = $isSimplified ? $response['reportingStatus'] : $response['clearanceStatus'];
+        $isSubmitted = $submissionStatus === ($isSimplified ? 'REPORTED' : 'CLEARED');;
         return new SubmissionResponse(
             validationResults: new ValidationResults(
                 infoMessages: $response['validationResults']['infoMessages'],
@@ -36,7 +38,8 @@ class InvoiceSubmissionService
                 errorMessages: $response['validationResults']['errorMessages'],
                 status: $response['validationResults']['status'],
             ),
-            status: $isSimplified ? $response['reportingStatus'] : $response['clearanceStatus'],
+            status: $submissionStatus,
+            isSubmitted: $isSubmitted,
         );
     }
 }
