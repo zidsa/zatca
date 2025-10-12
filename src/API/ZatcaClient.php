@@ -87,4 +87,14 @@ class ZatcaClient implements ZatcaClientInterface
     {
         return new ProductionApi($this);
     }
+
+    public function reportingApi(): ReportingApi
+    {
+        return new ReportingApi($this);
+    }
+
+    public function clearanceApi(): ClearanceApi
+    {
+        return new ClearanceApi($this);
+    }
 }
