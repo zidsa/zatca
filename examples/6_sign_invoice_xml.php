@@ -21,10 +21,8 @@ $result = (new \Zid\Zatca\InvoiceSigningService($digitalSignatureService))->sign
     invoiceHash: $base64Hash
 );
 
-echo 'Invoice UUID status:' . PHP_EOL;
-echo $result->uuid . PHP_EOL;
-echo 'Invoice Hash:' . PHP_EOL;
-echo $result->invoiceHash . PHP_EOL;
+echo 'Invoice Signature:' . PHP_EOL;
+echo $result->signature . PHP_EOL;
 echo 'Signed invoice (Base64 encoded):' . PHP_EOL;
 echo $result->b64SignedInvoice . PHP_EOL;
 

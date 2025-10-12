@@ -42,13 +42,13 @@ class InvoiceSigningService
         $issuerName = $this->getIssuerName($certInfo);
         $serialNumber = $this->getSerialNumberForCertificateObject($certInfo);
         $signedPropertiesHash = $this->getSignedPropertiesHash($signatureTimestamp, $publicKeyHashing, $issuerName, $serialNumber);
-        $SignatureValue = $this->digitalSignatureService->get($invoiceHash, $privateKeyContent);
+        $signatureValue = $this->digitalSignatureService->get($invoiceHash, $privateKeyContent);
 
         // Populate UBLExtension Template
         $stringUBLExtension = file_get_contents($ublTemplatePath);
         $stringUBLExtension = str_replace("INVOICE_HASH", $invoiceHash, $stringUBLExtension);
         $stringUBLExtension = str_replace("SIGNED_PROPERTIES", $signedPropertiesHash, $stringUBLExtension);
-        $stringUBLExtension = str_replace("SIGNATURE_VALUE", $SignatureValue, $stringUBLExtension);
+        $stringUBLExtension = str_replace("SIGNATURE_VALUE", $signatureValue, $stringUBLExtension);
         $stringUBLExtension = str_replace("CERTIFICATE_CONTENT", $x509CertificateContent, $stringUBLExtension);
         $stringUBLExtension = str_replace("SIGNATURE_TIMESTAMP", $signatureTimestamp, $stringUBLExtension);
         $stringUBLExtension = str_replace("PUBLICKEY_HASHING", $publicKeyHashing, $stringUBLExtension);
@@ -74,9 +74,8 @@ class InvoiceSigningService
         $base64Invoice = base64_encode($xmlDeclaration . "\n" . $updatedXmlString);
 
         return new InvoiceSigningResult(
-            invoiceHash: $invoiceHash,
+            signature: $signatureValue,
             b64SignedInvoice: $base64Invoice,
-            uuid: $invoiceUuid
         );
     }
 
