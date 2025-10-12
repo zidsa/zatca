@@ -3,24 +3,29 @@
 namespace Zid\Zatca;
 
 use DateTime;
-use Exception;
 use Zid\Zatca\Entities\CSID;
 use Zid\Zatca\Entities\InvoiceSigningResult;
 use Zid\Zatca\Exceptions\InvoiceSigningException;
 
 class InvoiceSigningService
 {
-    public function __construct(private GetDigitalSignatureService $digitalSignatureService)
-    {
+    public function __construct(
+        private GetDigitalSignatureService $digitalSignatureService,
+        private QrCodeGeneratorService $qrCodeGeneratorService,
+    ) {
     }
 
-    public function sign(CSID $csid, string $privateKeyContent, string $qrCode, string $canonicalXml, string $invoiceUuid, $invoiceHash): InvoiceSigningResult
+    public function sign(CSID $csid, string $privateKeyContent, string $canonicalXml, string $invoiceHash): InvoiceSigningResult
     {
         $ublTemplatePath = __DIR__ . '/Data/ZatcaDataUbl.xml';
         $signaturePath = __DIR__ . '/Data/ZatcaDataSignature.xml';
 
         $x509CertificateContent = base64_decode($csid->certificate);
         $privateKeyContent = str_replace(["\n", "\t", "-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----"], '', $privateKeyContent);
+        $signatureValue = $this->digitalSignatureService->get($invoiceHash, $privateKeyContent);
+
+        // Generate QR Code
+        $qrCode = $this->qrCodeGeneratorService->generate($csid, $invoiceHash, $canonicalXml, $signatureValue);
 
         $xmlDeclaration = '<?xml version="1.0" encoding="utf-8"?>';
 
@@ -42,7 +47,6 @@ class InvoiceSigningService
         $issuerName = $this->getIssuerName($certInfo);
         $serialNumber = $this->getSerialNumberForCertificateObject($certInfo);
         $signedPropertiesHash = $this->getSignedPropertiesHash($signatureTimestamp, $publicKeyHashing, $issuerName, $serialNumber);
-        $signatureValue = $this->digitalSignatureService->get($invoiceHash, $privateKeyContent);
 
         // Populate UBLExtension Template
         $stringUBLExtension = file_get_contents($ublTemplatePath);
@@ -76,6 +80,7 @@ class InvoiceSigningService
         return new InvoiceSigningResult(
             signature: $signatureValue,
             b64SignedInvoice: $base64Invoice,
+            b64QrCode: $qrCode,
         );
     }
 

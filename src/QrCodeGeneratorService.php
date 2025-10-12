@@ -12,25 +12,22 @@ class QrCodeGeneratorService
     private SimpleXMLElement $xmlObject;
 
     public function __construct(
-        private GetDigitalSignatureService $digitalSignatureService,
         private GetPublicKeyAndSignatureService $publicKeyAndSignatureService,
     ) {
     }
 
-    public function generate(CSID $csid, string $invoiceHash, string $canonicalXml, string $privateKeyContent): string
+    public function generate(CSID $csid, string $invoiceHash, string $canonicalXml, string $signatureValue): string
     {
-        $SignatureValue = $this->digitalSignatureService->get($invoiceHash, $privateKeyContent);
-
         $x509CertificateContent = base64_decode($csid->certificate);
         try {
             $result = $this->publicKeyAndSignatureService->get($x509CertificateContent);
             $ECSDAPublicKey = $result['public_key_raw'];
 
             $this->loadXmlObject($canonicalXml);
-            $qrCodeTags = $this->getInvoiceDetails($invoiceHash, $SignatureValue, $ECSDAPublicKey);
+            $qrCodeTags = $this->getInvoiceDetails($invoiceHash, $signatureValue, $ECSDAPublicKey);
 
             // Only add certificateSignature if simplified invoice
-            if ($this->isSimplifiedInvoice($canonicalXml)) {
+            if ($this->isSimplifiedInvoice()) {
                 $qrCodeTags[9] = $result['signature'];
             }
 
