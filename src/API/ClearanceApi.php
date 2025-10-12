@@ -18,7 +18,6 @@ class ClearanceApi implements ZatcaApiInterface
             'Authorization' => 'Basic ' . base64_encode(
                 "$binarySecurityToken:$secret"
             ),
-
             'Accept-Language' => $language,
             'Content-Type' => 'application/json',
             'Clearance-Status' => '1',

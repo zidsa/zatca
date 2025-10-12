@@ -16,9 +16,8 @@ class ProductionApi implements ZatcaApiInterface
             'Authorization' => 'Basic ' . base64_encode(
                 "$binarySecurityToken:$secret"
             ),
-
             'Accept-Language' => $language,
-            'Content-Type: application/json',
+            'Content-Type' => 'application/json',
         ]);
     }
 }

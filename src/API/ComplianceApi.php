@@ -28,13 +28,7 @@ class ComplianceApi implements ZatcaApiInterface
                 "$binarySecurityToken:$secret"
             ),
             'Accept-Language' => $language,
-
-
-
-//            'accept: application/json',
-//            'accept-language: en',
-//            'Accept-Version: V2',
-            'Content-Type: application/json',
+            'Content-Type' => 'application/json',
         ]);
     }
 }
