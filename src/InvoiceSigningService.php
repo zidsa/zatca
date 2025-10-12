@@ -16,8 +16,8 @@ class InvoiceSigningService
 
     public function sign(CSID $csid, string $privateKeyContent, string $qrCode, string $canonicalXml, string $invoiceUuid, $invoiceHash): InvoiceSigningResult
     {
-        $ublTemplatePath = '../src/Data/ZatcaDataUbl.xml';
-        $signaturePath = '../src/Data/ZatcaDataSignature.xml';
+        $ublTemplatePath = __DIR__ . '/Data/ZatcaDataUbl.xml';
+        $signaturePath = __DIR__ . '/Data/ZatcaDataSignature.xml';
 
         $x509CertificateContent = base64_decode($csid->certificate);
         $privateKeyContent = str_replace(["\n", "\t", "-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----"], '', $privateKeyContent);
