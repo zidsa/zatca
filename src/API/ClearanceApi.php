@@ -10,7 +10,7 @@ class ClearanceApi implements ZatcaApiInterface
 
     public function single(string $binarySecurityToken, string $secret, string $invoiceHash, string $uuid, string $invoiceXml, string $language = 'en'): array
     {
-        return $this->client->postRequest('invoices/clearance/single', [
+        return $this->client->throwsExceptionOnError(false)->postRequest('invoices/clearance/single', [
             "invoiceHash" => $invoiceHash,
             "uuid" => $uuid,
             "invoice" => base64_encode($invoiceXml),

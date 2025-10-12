@@ -15,6 +15,9 @@ class ZatcaClient implements ZatcaClientInterface
         'Accept-Version' => 'V2',
         'Accept' => 'application/json',
     ];
+    private array $options = [
+        'http_errors' => true,
+    ];
 
     public function __construct(
         private ZatcaEnvironment $environment = ZatcaEnvironment::SANDBOX,
@@ -42,10 +45,10 @@ class ZatcaClient implements ZatcaClientInterface
         array $payload = [],
         array $headers = [],
     ): array {
-        $options = [
+        $options = array_merge($this->options, [
             'headers' => array_merge($this->headers, $headers),
             'json' => $payload,
-        ];
+        ]);
 
         try {
             $response = $this->httpClient->request($method, $endpoint, $options);
@@ -76,6 +79,12 @@ class ZatcaClient implements ZatcaClientInterface
         array $headers = [],
     ): array {
         return $this->send('POST', $endpoint, $payload, $headers);
+    }
+
+    public function throwsExceptionOnError(bool $value): self
+    {
+        $this->options['http_errors'] = $value;
+        return $this;
     }
 
     public function complianceApi(): ComplianceApi
