@@ -3,8 +3,6 @@ require_once("../vendor/autoload.php");
 
 $qrCode = file_get_contents('output/qr_code.txt');
 $invoiceData = json_decode(file_get_contents('output/invoice.json'), true);
-$ublTemplatePath = '../src/Data/ZatcaDataUbl.xml';
-$signaturePath = '../src/Data/ZatcaDataSignature.xml';
 $canonicalXml = base64_decode($invoiceData['base64CanonicalXml']);
 $uuid = $invoiceData['uuid'];
 $base64Hash = $invoiceData['invoiceHash'];
