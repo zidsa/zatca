@@ -61,7 +61,7 @@ class InvoiceHashingService
             invoiceHash: $base64Hash,
             uuid: $uuid,
             b64Invoice: $base64Invoice,
-            base64CanonicalXml: base64_encode($canonicalXml),
+            b64CanonicalXml: base64_encode($canonicalXml),
         );
     }
 }

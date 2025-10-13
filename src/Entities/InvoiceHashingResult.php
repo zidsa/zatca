@@ -8,7 +8,7 @@ class InvoiceHashingResult
         public string $invoiceHash,
         public string $uuid,
         public string $b64Invoice,
-        public string $base64CanonicalXml,
+        public string $b64CanonicalXml,
     ) {
     }
 }
