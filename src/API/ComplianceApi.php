@@ -8,10 +8,10 @@ class ComplianceApi implements ZatcaApiInterface
     {
     }
 
-    public function requestComplianceCertificate(string $csr, string $otp): array
+    public function requestComplianceCertificate(string $b64Csr, string $otp): array
     {
         return $this->client->postRequest('compliance', [
-            'csr' => base64_encode($csr),
+            'csr' => $b64Csr,
         ], [
             'OTP' => $otp,
         ]);

@@ -7,7 +7,7 @@ $complianceService = new \Zid\Zatca\ComplianceService(ZatcaEnvironment::SANDBOX)
 
 $csr = file_get_contents('output/certificate.csr');
 $ccsid = $complianceService->requestComplianceCertificate(
-    csr: $csr,
+    b64Csr: base64_encode($csr),
     otp: '123456'
 );
 

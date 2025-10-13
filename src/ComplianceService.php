@@ -18,9 +18,9 @@ class ComplianceService
         $this->zatcaClient = new ZatcaClient($environment);
     }
 
-    public function requestComplianceCertificate(string $csr, string $otp): CSID
+    public function requestComplianceCertificate(string $b64Csr, string $otp): CSID
     {
-        $result = $this->zatcaClient->complianceApi()->requestComplianceCertificate($csr, $otp);
+        $result = $this->zatcaClient->complianceApi()->requestComplianceCertificate($b64Csr, $otp);
 
         return new CSID(
             certificate: $result['binarySecurityToken'],
