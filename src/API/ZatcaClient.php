@@ -83,6 +83,7 @@ class ZatcaClient implements ZatcaClientInterface
             throw new ZatcaApiException("Request failed with status code $statusCode.");
         }
 
+        $response->getBody()->rewind();
         return json_decode($response->getBody()->getContents(), true);
     }
 
