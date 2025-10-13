@@ -9,25 +9,25 @@ use Zid\Zatca\Exceptions\ZatcaApiException;
 
 class ZatcaClient implements ZatcaClientInterface
 {
+    public static array $DEFAULT_CLIENT_CONFIG = [
+        'timeout' => 30,
+        'verify' => true,
+        'http_errors' => true,
+    ];
     private const SUCCESS_STATUS_CODES = [200, 202];
     private ClientInterface $httpClient;
     private array $headers = [
         'Accept-Version' => 'V2',
         'Accept' => 'application/json',
     ];
-    private array $options = [
-        'http_errors' => true,
-    ];
 
     public function __construct(
         private ZatcaEnvironment $environment = ZatcaEnvironment::SANDBOX,
         ?ClientInterface $client = null
     ) {
-        $this->httpClient  = $client ?? new Client([
+        $this->httpClient  = $client ?? new Client(array_merge(self::$DEFAULT_CLIENT_CONFIG, [
             'base_uri' => $this->getBaseUri(),
-            'timeout'  => 30,
-            'verify'   => true,
-        ]);
+        ]));
     }
 
     protected function getBaseUri(): string
@@ -45,10 +45,10 @@ class ZatcaClient implements ZatcaClientInterface
         array $payload = [],
         array $headers = [],
     ): array {
-        $options = array_merge($this->options, [
+        $options = [
             'headers' => array_merge($this->headers, $headers),
             'json' => $payload,
-        ]);
+        ];
 
         try {
             $response = $this->httpClient->request($method, $endpoint, $options);
@@ -67,6 +67,8 @@ class ZatcaClient implements ZatcaClientInterface
                         ', ',
                         $errorMessages
                     );
+                } elseif ($jsonResponse->message ?? false) {
+                    $message = $jsonResponse->message;
                 }
             } catch (\Exception $e) {
                 //
@@ -90,12 +92,6 @@ class ZatcaClient implements ZatcaClientInterface
         array $headers = [],
     ): array {
         return $this->send('POST', $endpoint, $payload, $headers);
-    }
-
-    public function throwsExceptionOnError(bool $value): self
-    {
-        $this->options['http_errors'] = $value;
-        return $this;
     }
 
     public function complianceApi(): ComplianceApi
