@@ -56,10 +56,14 @@ class ZatcaClient implements ZatcaClientInterface
             $message = $exception->getMessage();
             try {
                 $jsonResponse = json_decode($exception->getResponse()->getBody()->getContents());
-                if ($jsonResponse->errors ?? false) {
+                if (($jsonResponse->errors ?? false) && is_array($jsonResponse->errors)) {
+                    $errors = $jsonResponse->errors;
+                    if (!is_string($errors[0]) && isset($errors[0]->message)) {
+                        $errors = array_map(fn($m) => $m->message, $errors);
+                    }
                     $message = implode(
                         ', ',
-                        $jsonResponse->errors
+                        $errors
                     );
                 } elseif ($jsonResponse->validationResults ?? false) {
                     $errorMessages = array_map(fn($m) => "$m->code ($m->category): $m->message", $jsonResponse->validationResults->errorMessages);
