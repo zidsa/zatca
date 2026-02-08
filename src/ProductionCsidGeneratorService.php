@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca;
 
 use Zid\Zatca\API\ZatcaClient;
@@ -12,8 +14,9 @@ class ProductionCsidGeneratorService
 
     public function __construct(
         ZatcaEnvironment $environment = ZatcaEnvironment::SANDBOX,
+        ?ZatcaClient $client = null
     ) {
-        $this->zatcaClient = new ZatcaClient($environment);
+        $this->zatcaClient = $client ?? new ZatcaClient($environment);
     }
 
     public function requestProductionCertificate(string $binarySecurityToken, string $secret, string $ccsidRequestId): CSID

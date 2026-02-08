@@ -6,7 +6,7 @@ use Zid\Zatca\Entities\CSID;
 use Zid\Zatca\QrCodeGeneratorService;
 
 $invoiceData = json_decode(file_get_contents('output/simplified/invoice/invoice.json'), true);
-$canonicalXml = base64_decode($invoiceData['invoice']);
+$canonicalXml = base64_decode($invoiceData['b64Invoice']);
 $base64Hash = $invoiceData['invoiceHash'];
 $ccsid = CSID::loadFromJson('output/ccsid.json');
 

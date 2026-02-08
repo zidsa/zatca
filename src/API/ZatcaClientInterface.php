@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca\API;
 
 use GuzzleHttp\ClientInterface;
@@ -21,4 +23,8 @@ interface ZatcaClientInterface
     public function complianceApi(): ZatcaApiInterface;
 
     public function productionApi(): ZatcaApiInterface;
+
+    public function reportingApi(): ReportingApi;
+
+    public function clearanceApi(): ClearanceApi;
 }

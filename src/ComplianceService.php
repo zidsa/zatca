@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca;
 
 use Zid\Zatca\API\ZatcaClient;
@@ -14,8 +16,9 @@ class ComplianceService
 
     public function __construct(
         ZatcaEnvironment $environment = ZatcaEnvironment::SANDBOX,
+        ?ZatcaClient $client = null
     ) {
-        $this->zatcaClient = new ZatcaClient($environment);
+        $this->zatcaClient = $client ?? new ZatcaClient($environment);
     }
 
     public function requestComplianceCertificate(string $b64Csr, string $otp): CSID
@@ -50,8 +53,8 @@ class ComplianceService
             ),
             reportingStatus: $result['reportingStatus'],
             clearanceStatus: $result['clearanceStatus'],
-            qrSellerStatus: $result['qrSellertStatus'],
-            qrBuyerStatus: $result['qrBuyertStatus'],
+            qrSellerStatus: $result['qrSellertStatus'], // The extra 't' is intentional due to a typo in the API response
+            qrBuyerStatus: $result['qrBuyertStatus'], // The extra 't' is intentional due to a typo in the API response
         );
     }
 }

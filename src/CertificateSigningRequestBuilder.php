@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca;
 
 use Zid\Zatca\Enums\ZatcaEnvironment;
@@ -30,7 +32,7 @@ class CertificateSigningRequestBuilder
         return $this;
     }
 
-    public function setSerialNumber(string $solutionProvider, $solutionName, string $serialNumber): self
+    public function setSerialNumber(string $solutionProvider, string $solutionName, string $serialNumber): self
     {
         $this->serialNumber = "1-{$solutionProvider}|2-{$solutionName}|3-{$serialNumber}";
         return $this;
@@ -162,6 +164,10 @@ class CertificateSigningRequestBuilder
         ];
 
         $this->csr = openssl_csr_new($distinguishedNames, $this->privateKey, $csrConfig);
+
+        // Remove temporary config file
+        unlink($csrConfig['config']);
+
         if ($this->csr === false) {
             throw new CsrGenerationException('CSR generation failed: ' . openssl_error_string());
         }

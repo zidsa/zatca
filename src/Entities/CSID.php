@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca\Entities;
 
 class CSID
@@ -7,7 +9,7 @@ class CSID
     public function __construct(
         public string $certificate,
         public string $secret,
-        public string $requestId,
+        public int $requestId,
     ) {
     }
 
@@ -22,7 +24,7 @@ class CSID
         return new self(
             certificate: $data['certificate'],
             secret: $data['secret'],
-            requestId: $data['requestId'],
+            requestId: (int) $data['requestId'],
         );
     }
 

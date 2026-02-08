@@ -6,7 +6,7 @@
         "zatca"
     ],
     "homepage": "https://github.com/zidsa/zatca-php-package",
-    "license": "The Unlicense",
+    "license": "MIT",
     "type": "library",
     "authors": [
         {
@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-openssl": "*",
         "guzzlehttp/guzzle": "^7.2",
         "ext-dom": "*",

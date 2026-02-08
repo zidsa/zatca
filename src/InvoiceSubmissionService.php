@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca;
 
 use Zid\Zatca\API\ZatcaClient;
@@ -15,8 +17,9 @@ class InvoiceSubmissionService
 
     public function __construct(
         ZatcaEnvironment $environment = ZatcaEnvironment::SANDBOX,
+        ?ZatcaClient $client = null
     ) {
-        $this->zatcaClient = new ZatcaClient($environment);
+        $this->zatcaClient = $client ?? new ZatcaClient($environment);
     }
 
     public function submit(
@@ -50,7 +53,7 @@ class InvoiceSubmissionService
         }
 
         $submissionStatus = $isSimplified ? $response['reportingStatus'] : $response['clearanceStatus'];
-        $isSubmitted = $submissionStatus === ($isSimplified ? 'REPORTED' : 'CLEARED');;
+        $isSubmitted = $submissionStatus === ($isSimplified ? 'REPORTED' : 'CLEARED');
         return new SubmissionResponse(
             validationResults: new ValidationResults(
                 infoMessages: $response['validationResults']['infoMessages'],

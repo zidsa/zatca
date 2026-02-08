@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca;
 
 use Exception;
@@ -8,9 +10,15 @@ class GetPublicKeyAndSignatureService
 {
     public function get(string $certificateBase64): array
     {
+        $tempFile = null;
+        
         try {
             // Step 1: Create a temporary file for the certificate
             $tempFile = tempnam(sys_get_temp_dir(), 'cert');
+            
+            if ($tempFile === false) {
+                throw new Exception("Cannot create temporary file");
+            }
 
             // Step 2: Write the certificate content to the temporary file
             $certContent = "-----BEGIN CERTIFICATE-----\n";
@@ -23,10 +31,23 @@ class GetPublicKeyAndSignatureService
 
             // Step 3: Read the certificate
             $cert = openssl_x509_read($certContent);
+            
+            if ($cert === false) {
+                throw new Exception("Failed to read certificate");
+            }
 
             // Step 4: Extract the public key
             $pubKey = openssl_pkey_get_public($cert);
+            
+            if ($pubKey === false) {
+                throw new Exception("Failed to extract public key from certificate");
+            }
+            
             $pubKeyDetails = openssl_pkey_get_details($pubKey);
+            
+            if ($pubKeyDetails === false || !isset($pubKeyDetails['ec']['x'], $pubKeyDetails['ec']['y'])) {
+                throw new Exception("Failed to get public key details or EC components missing");
+            }
 
             // Step 5: Construct raw public key from x and y components
             $x = $pubKeyDetails['ec']['x'];
@@ -52,12 +73,27 @@ class GetPublicKeyAndSignatureService
 
             // Step 6: Extract the ECDSA signature from DER data
             $certPEM = file_get_contents($tempFile);
+            
+            if ($certPEM === false) {
+                throw new Exception("Failed to read certificate from temporary file");
+            }
+            
             if (!preg_match('/-+BEGIN CERTIFICATE-+\s+(.+)\s+-+END CERTIFICATE-+/s', $certPEM, $matches)) {
                 throw new Exception("Error extracting DER data from certificate.");
             }
 
             $derData = base64_decode($matches[1]);
+            
+            if ($derData === false) {
+                throw new Exception("Failed to decode certificate DER data");
+            }
+            
             $sequencePos = strpos($derData, "\x30", -72);
+            
+            if ($sequencePos === false) {
+                throw new Exception("Failed to locate signature sequence in DER data");
+            }
+            
             $signature = substr($derData, $sequencePos);
 
             // Return the correctly extracted details
@@ -70,9 +106,9 @@ class GetPublicKeyAndSignatureService
         } catch (Exception $e) {
             throw new Exception("[Error] Failed to process certificate: " . $e->getMessage());
         } finally {
-            // Clean up resources
-            if (isset($tempFile) && file_exists($tempFile)) {
-                unlink($tempFile);
+            // Clean up resources - ensure temp file is deleted even if script crashes
+            if ($tempFile !== null && file_exists($tempFile)) {
+                @unlink($tempFile);
             }
         }
     }

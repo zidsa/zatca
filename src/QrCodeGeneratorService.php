@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca;
 
 use Exception;
@@ -62,7 +64,7 @@ class QrCodeGeneratorService
         ];
     }
 
-    private function isSimplifiedInvoice(): string
+    private function isSimplifiedInvoice(): bool
     {
         if (!isset($this->xmlObject)) {
             throw new QrGenerationException('XML object is not set');

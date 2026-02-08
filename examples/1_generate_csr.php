@@ -7,7 +7,7 @@ $zatcaCsrBuilder = new CertificateSigningRequestBuilder();
 
 $zatcaCsrBuilder
     ->setCommonName('TST-886431145-311111111101113')
-    ->setSerialNumber('1-TST|2-TST|3-ed22f1d8-e6a2-1118-9b58-d9a8f11e445f')
+    ->setSerialNumber('TST', 'TST', 'ed22f1d8-e6a2-1118-9b58-d9a8f11e445f')
     ->setOrganizationIdentifier('311111111101113')
     ->setOrganizationalUnitName('Riyadh Branch')
     ->setOrganizationName('ABCD Limited')
@@ -18,7 +18,7 @@ $zatcaCsrBuilder
     ->generate();
 
 echo 'CSR:' . PHP_EOL;
-echo $zatcaCsrBuilder->getCSR() . PHP_EOL;
+echo $zatcaCsrBuilder->getCsr() . PHP_EOL;
 echo 'Private Key:' . PHP_EOL;
 echo $zatcaCsrBuilder->getPrivateKey() . PHP_EOL;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca;
 
 use DateTime;
@@ -115,7 +117,7 @@ class InvoiceSigningService
         for ($i = 0; $i < $hexLength; $i++) {
             $hexDigit = hexdec($serialNumberHex[$i]);
             $serialNumberDec = bcmul($serialNumberDec, '16', 0);
-            $serialNumberDec = bcadd($serialNumberDec, $hexDigit, 0);
+            $serialNumberDec = bcadd($serialNumberDec, (string) $hexDigit, 0);
         }
 
         return $serialNumberDec;

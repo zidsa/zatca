@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Zid\Zatca\API;
 
 class ReportingApi implements ZatcaApiInterface
